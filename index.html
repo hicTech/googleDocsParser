@@ -1,0 +1,114 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+    <title>Google Spreadsheet Javascript</title> 
+    <script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="google-spreadsheet.js"></script>
+    <script type="text/javascript" src="underscore/underscore.js"></script>
+    <script type="text/javascript" src="underscore/_plus.js"></script>
+    <style>
+      body{
+        background-color: black;
+        color: green;
+        font-size: 13px;
+        font-family: sans-serif;
+      }
+      h1,a{ color: yellow}
+      input{
+        font-size: 13px;
+        background-color: black;
+        color:white;
+      }
+    </style>
+  </head> 
+  <body> 
+   
+    <pre id='results'></pre>
+    
+    
+    <div id="result_json"></div>
+    
+    <script>
+    </script>
+    <script >
+      localStorage.clear();
+      var sample_url = "https://docs.google.com/spreadsheet/pub?key=0At-edMs8aNDBdGV5U3JfUEFQMnl1Sk42dGNUUVllTlE&output=html";
+      var url_parameter = document.location.search.split(/\?url=/)[1]
+      var url = url_parameter || sample_url;
+      var googleSpreadsheet = new GoogleSpreadsheet();
+      googleSpreadsheet.url(url);
+      googleSpreadsheet.load(function(result) {
+        $('#results').html(JSON.stringify(result).replace(/,/g,",\n"));
+        printResult(result);
+      });
+    </script>
+    <script>
+     
+      $('#spreadsheet_url').html("<a href='"+url+"'>"+url+"</a>");
+     
+
+      if (url != sample_url){
+        $("div#links").append("<br/><a href='"+document.location.pathname+"'>Original Sample Spreadsheet</a>")
+      }
+      
+      
+      function printResult(result){
+      	var data = result.data;
+      	var obj = {};
+      	var th = {};
+      	var tr = [];
+      	var trs = [];
+      	
+      	var result = {"th":null,"trs":null};
+      	
+      	_.each(data,function(v,index){
+      		if(v.indexOf("#label#:") != -1){
+      			var label = v.replace("#label#:","");
+      			th[index] = label;
+      		}
+      	});
+      	
+      	
+
+		var col = 0
+		var thisTr = {};
+		var iteration = 0;
+      	_.each(data,function(v){
+      		//alert(th[col]+" : "+data[index]);
+      		
+      		
+	      		if(col < _.keys(th).length){
+	      			thisTr[th[col]] = data[iteration+_.keys(th).length];
+	      			col++;
+	      			iteration++;
+	      		}
+	      		else{
+	      			
+	      			tr.push(thisTr);
+	      			col = 0;
+					thisTr = {};
+	      		}
+	      
+	      	
+	      		
+      		
+      		
+      		/*var col = 0;
+      		if(v.indexOf("#label#:") == -1){
+      			tr[th[col]] = v;
+      			col++;
+      		}*/
+      		
+      	});
+      	
+      	
+      	result.th = th;
+      	result.trs = tr;
+      	alert(_.toStr(result))
+      	
+      	
+      }
+    </script>
+  </body>
+</html>
+

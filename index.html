@@ -53,6 +53,7 @@
       
       
       function printResult(result){
+      	alert(_.toStr(result.data));
       	var data = result.data;
       	var obj = {};
       	var th = {};
@@ -70,43 +71,34 @@
       	
       	
 
+		
+		
+		
+		var new_data = [];       //contains only values without #label#
+		_.each(data,function(v){
+			if(v.indexOf("#label#") == -1)
+				new_data.push(escape(v));
+		});
+		
+		
 		var col = 0
 		var thisTr = {};
-		var iteration = 0;
-      	_.each(data,function(v){
-      		//alert(th[col]+" : "+data[index]);
-      		
-      		
-	      		if(col < _.keys(th).length){
-	      			thisTr[th[col]] = data[iteration+_.keys(th).length];
-	      			col++;
-	      			iteration++;
-	      		}
-	      		else{
-	      			
-	      			tr.push(thisTr);
-	      			col = 0;
-					thisTr = {};
-	      		}
-	      
-	      	
-	      		
-      		
-      		
-      		/*var col = 0;
-      		if(v.indexOf("#label#:") == -1){
-      			tr[th[col]] = v;
-      			col++;
-      		}*/
-      		
+      	_.each(new_data,function(v){	
+			thisTr[th[col]] = unescape(v);
+			col++;
+      		if(col == _.keys(th).length){
+      			tr.push(thisTr);
+      			thisTr = {};
+      			col = 0;
+  			}
       	});
+      	
       	
       	
       	result.th = th;
       	result.trs = tr;
-      	alert(_.toStr(result))
       	
-      	
+        alert(_.toStr(result));
       }
     </script>
   </body>

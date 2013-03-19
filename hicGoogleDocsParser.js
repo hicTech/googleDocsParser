@@ -79,7 +79,7 @@ function hicGoogleDocsParser(opts){
 	  	
 	  	function googleDocsParserShowErrors(errors){
 	  		var error_string = "<div style='font-size:20px; font-weight:bold; margin:5px 0px 5px 0px'>googleDocsParser - ERROR</div></br>"+_.toStr(errors);
-	  		$("body").append("<div style='position:fixed; width:100%; color:#fff; top:0px; left:0px; font-family:Helvetica; text-align:center; padding-bottom:20px; background-color:#f00; font-size:11px'>"+error_string+"</div>")
+	  		$("body").append("<div style='position:fixed;z-index:99999999; width:100%; color:#fff; top:0px; left:0px; font-family:Helvetica; text-align:center; padding-bottom:20px; background-color:#f00; font-size:11px; opacity:0.9'>"+error_string+"</div>");
 	  	}
 	  	
 	   

@@ -3,7 +3,7 @@
 	<head> 
     <title>GoogleDocsParser</title> 
     <script type="text/javascript" src="jquery-1.4.4.min.js"></script>
-    <script type="text/javascript" src="google-spreadsheet.js"></script>
+    <script type="text/javascript" src="hicGoogleDocsParser.js"></script>
     <script type="text/javascript" src="underscore/underscore.js"></script>
     <script type="text/javascript" src="underscore/_plus.js"></script>
     <style>
@@ -28,38 +28,27 @@
     
     <div id="result_json"></div>
     
+
+
     <script>
-    </script>
-    <script >
-      localStorage.clear();
-      var sample_url = "https://docs.google.com/spreadsheet/pub?key=0At-edMs8aNDBdGV5U3JfUEFQMnl1Sk42dGNUUVllTlE&output=html";
-      var url_parameter = document.location.search.split(/\?url=/)[1]
-      var url = url_parameter || sample_url;
-      var googleSpreadsheet = new GoogleSpreadsheet();
-      googleSpreadsheet.url(url);
-      googleSpreadsheet.load(function(result) {
-        $('#results').html(JSON.stringify(result).replace(/,/g,",\n"));
-        printResult(result);
-      });
-    </script>
-    <script>
+    	
+    	hicGoogleDocsParser({
+    		"url":"https://docs.google.com/spreadsheet/pub?key=0At-edMs8aNDBdGV5U3JfUEFQMnl1Sk42dGNUUVllTlE&output=html",
+    		"callback":"printResult"
+    	});
      
-      $('#spreadsheet_url').html("<a href='"+url+"'>"+url+"</a>");
+      
      
 
-      if (url != sample_url){
-        $("div#links").append("<br/><a href='"+document.location.pathname+"'>Original Sample Spreadsheet</a>")
-      }
+    
       
       
       function printResult(result){
-      	alert(_.toStr(result.data));
       	var data = result.data;
       	var obj = {};
       	var th = {};
       	var tr = [];
       	var trs = [];
-      	
       	var result = {"th":null,"trs":null};
       	
       	_.each(data,function(v,index){
@@ -69,10 +58,6 @@
       		}
       	});
       	
-      	
-
-		
-		
 		
 		var new_data = [];       //contains only values without #label#
 		_.each(data,function(v){

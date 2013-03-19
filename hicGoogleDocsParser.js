@@ -1,3 +1,32 @@
+
+function hicGoogleDocsParser(opts){
+	localStorage.clear();
+	var sample_url = opts.url;
+	var url_parameter = document.location.search.split(/\?url=/)[1]
+	var url = url_parameter || sample_url;
+	var googleSpreadsheet = new GoogleSpreadsheet();
+	googleSpreadsheet.url(url);
+	googleSpreadsheet.load(function(result) {
+		//  $('#results').html(JSON.stringify(result).replace(/,/g,",\n"));
+		eval(opts.callback+"(result)");
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 Updated versions can be found at https://github.com/mikeymckay/google-spreadsheet-javascript
 */var GoogleSpreadsheet, GoogleUrl;
@@ -124,3 +153,4 @@ GoogleSpreadsheet.callbackCells = function(data) {
 };
 /* TODO (Handle row based data)
 GoogleSpreadsheet.callbackList = (data) ->*/
+

@@ -7,10 +7,16 @@
     <script type="text/javascript" src="underscore/underscore.js"></script>
     <script type="text/javascript" src="underscore/_plus.js"></script>
     
+     <!--[if lt IE 9]>
+	  <script type="text/javascript" src="spinner/spinners.min.js"></script>
+	<![endif]-->
+	
+	<script type="text/javascript" src="spinner/spinners.min.js"></script>
+    
   </head> 
   <body> 
    
-    <pre id='results'></pre>
+    
     
     
     <div id="result_json"></div>
@@ -21,12 +27,13 @@
     	
 	hicGoogleDocsParser({
 		"url":"https://docs.google.com/spreadsheet/pub?key=0At-edMs8aNDBdGV5U3JfUEFQMnl1Sk42dGNUUVllTlE&output=html",
-		"callback":"alertJson"
+		"callback":"printJson",
+		"loadingTarget":"#result_json"
 	});
 	 
 	  
-	function alertJson(result){
-		alert(_.toStr(result));
+	function printJson(result){
+		$("#result_json").append(_.toStr(result));
 	}
 
     

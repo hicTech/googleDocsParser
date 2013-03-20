@@ -1,5 +1,20 @@
 
 function hicGoogleDocsParser(opts){
+	var $loading_container = $("<div style='width:40px; height:40px; margin:30px auto' class='googleDocsParserLoadingElement'></div>");
+	$(opts.loadingTarget).html($loading_container);
+
+	
+	var loading = Spinners.create('.googleDocsParserLoadingElement', {
+	  radius: 11,
+	  height: 7,
+	  width: 1.9,
+	  dashes: 22,
+	  opacity: 0.3,
+	  rotation: 950,
+	  color: '#000000'
+	}).play();
+
+		
 	localStorage.clear();
 	var sample_url = opts.url;
 	var url_parameter = document.location.search.split(/\?url=/)[1]
@@ -7,58 +22,67 @@ function hicGoogleDocsParser(opts){
 	var googleSpreadsheet = new GoogleSpreadsheet();
 	googleSpreadsheet.url(url);
 	googleSpreadsheet.load(function(result){
-	
-	
-	createJsonFromGoogleDoc(result);
+		if(result == null)
+			hicGoogleDocsParser(opts);
+		else{
+			loading.remove();
+			$loading_container.remove();
+			createJsonFromGoogleDoc(result,opts);
+		}
+	});
+
+}
+
+
 		
-	function createJsonFromGoogleDoc(result){
-		
-	  	var data = result.data;
-	  	var obj = {};
-	  	var th = {};
-	  	var tr = [];
-	  	var trs = [];
-	  	var result = {"th":null,"trs":null};
-	  	
-	  	var errors = {};
-	  	
-	  	/* labels */
-	  	_.each(data,function(v,index){
-	  		if(v.indexOf("#label#:") != -1){
-	  			if(v.indexOf(" ") != -1)
-	  				errors["whiteSpaces"] = {
-						"errorType" : "some label has white space..... delete white spaces!",
-						"docsUrl" : url
-					};
-					
-	  			var label = v.replace("#label#:","");
-	  			th[index] = label;
-	  		}
-	  		
-	  	});
-	  	
-	  	/* verify if some label has duplicates*/
-	  	var temp_arr = [];
-	  	_.each(th,function(label){
-	  		temp_arr.push(label);
-	  	})
-		if(hasDuplicate(temp_arr)){
-			errors["duplicates"] = {
-				"errorType" : "some label has duplicate",
-				"docsUrl" : url
-			}
+function createJsonFromGoogleDoc(result,opts){
+	
+	var data = result.data;
+	var obj = {};
+	var th = {};
+	var tr = [];
+	var trs = [];
+	var result = {"th":null,"trs":null};
+	
+	var errors = {};
+	
+	/* labels */
+	_.each(data,function(v,index){
+		if(v.indexOf("#label#:") != -1){
+			if(v.indexOf(" ") != -1)
+				errors["whiteSpaces"] = {
+					"errorType" : "some label has white space..... delete white spaces!",
+					"docsUrl" : url
+				};
+				
+			var label = v.replace("#label#:","");
+			th[index] = label;
 		}
 		
-		
-		/* contains only values without #label# */
-		var new_data = [];
-		_.each(data,function(v){
-			if(v.indexOf("#label#") == -1)
-				new_data.push(escape(v));
-		});
-		
-		
-		/* populate the trs */
+	});
+	
+	/* verify if some label has duplicates*/
+	var temp_arr = [];
+	_.each(th,function(label){
+		temp_arr.push(label);
+	})
+	if(hasDuplicate(temp_arr)){
+		errors["duplicates"] = {
+			"errorType" : "some label has duplicate",
+			"docsUrl" : url
+		}
+	}
+	
+	
+	/* contains only values without #label# */
+	var new_data = [];
+	_.each(data,function(v){
+		if(v.indexOf("#label#") == -1)
+			new_data.push(escape(v));
+	});
+	
+	
+	/* populate the trs */
 		var col = 0
 		var thisTr = {};
 	  	_.each(new_data,function(v){	
@@ -73,35 +97,34 @@ function hicGoogleDocsParser(opts){
 	
 	  	result.th = th;
 	  	result.trs = tr;
-	  	
-	  	
-	  	/* show errors */
-	  	
-	  	function googleDocsParserShowErrors(errors){
-	  		var error_string = "<div style='font-size:20px; font-weight:bold; margin:5px 0px 5px 0px'>googleDocsParser - ERROR</div></br>"+_.toStr(errors);
-	  		$("body").append("<div style='position:fixed;z-index:99999999; width:100%; color:#fff; top:0px; left:0px; font-family:Helvetica; text-align:center; padding-bottom:20px; background-color:#f00; font-size:11px; opacity:0.9'>"+error_string+"</div>");
-	  	}
-	  	
+	  	 
 	   
 	   	/* CALLBACK */
-	   	if(!_.isEmpty(errors)){
-	   		_.each(errors,function(error){
-	   			googleDocsParserShowErrors(error)
-	   		});
-	   	}
-	   	else{
-	   		eval(opts.callback+"(result)");
-	   	}
-	   	
-	   	function hasDuplicate(arr){
-		    return (arr.length != _.uniq(arr).length);
-		}
-	   	
-	   	
-      }	
+	if(!_.isEmpty(errors)){
+		_.each(errors,function(error){
+			googleDocsParserShowErrors(error)
+		});
+	}
+	else{
+		eval(opts.callback+"(result)");  
+	}
+	
+	
+	
+	/* show errors */
+	function googleDocsParserShowErrors(errors){
+		var error_string = "<div style='font-size:20px; font-weight:bold; margin:5px 0px 5px 0px'>googleDocsParser - ERROR</div></br>"+_.toStr(errors);
+		$("body").append("<div style='position:fixed;z-index:99999999; width:100%; color:#fff; top:0px; left:0px; font-family:Helvetica; text-align:center; padding-bottom:20px; background-color:#f00; font-size:11px; opacity:0.9'>"+error_string+"</div>");
+	}
+	
+	
+	function hasDuplicate(arr){
+	    return (arr.length != _.uniq(arr).length);
+	}
+}	
 		
-	});
-}
+	
+
 
 
 
@@ -244,4 +267,6 @@ GoogleSpreadsheet.callbackCells = function(data) {
 };
 /* TODO (Handle row based data)
 GoogleSpreadsheet.callbackList = (data) ->*/
+
+
 

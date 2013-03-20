@@ -19,7 +19,11 @@
     
     
     
-    <div id="result_json"></div>
+    <div id="result_json" style="border:solid"></div>
+    
+    <div id="result_json2" style="border:solid"></div>
+    
+    <div id="result_json3" style="border:solid"></div>
     
 
 
@@ -28,12 +32,33 @@
 	hicGoogleDocsParser({
 		"url":"https://docs.google.com/spreadsheet/pub?key=0At-edMs8aNDBdGV5U3JfUEFQMnl1Sk42dGNUUVllTlE&output=html",
 		"callback":"printJson",
-		"loadingTarget":"#result_json"
+		"loadingTarget":"#result_json",
+		"target" : "#result_json"
 	});
+	
+	
+	 hicGoogleDocsParser({
+			"url":"https://docs.google.com/spreadsheet/pub?key=0AjlzvjiyIeVzdDdPNFhFQ2djS1Z5NUFqMDBlVmF5emc&output=html",
+			"callback":"printJson",
+			"loadingTarget":"#result_json2",
+			"target" : "#result_json2"
+		});
+	    
+	    
+
 	 
+	    hicGoogleDocsParser({
+			"url":"https://docs.google.com/spreadsheet/pub?key=0AjlzvjiyIeVzdDgyVDZwWVV4Tko4ZzRWNjRpQWQ0RFE&output=html",
+			"callback":"printJson",
+			"loadingTarget":"#result_json3",
+			"target" : "#result_json3"
+		});
+			
+	 
+	
 	  
-	function printJson(result){
-		$("#result_json").append(_.toStr(result));
+	function printJson(result,opts){
+		$(opts.target).append(_.toStr(result));
 	}
 
     

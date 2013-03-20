@@ -1,18 +1,25 @@
 
 function hicGoogleDocsParser(opts){
-	var $loading_container = $("<div style='width:40px; height:40px; margin:30px auto' class='googleDocsParserLoadingElement'></div>");
-	$(opts.loadingTarget).html($loading_container);
-
+	var alreadyHasLoading = $(opts.target).find(".googleDocsParserLoadingElement").size() != 0;
+	var $loading_container, loading;
 	
-	var loading = Spinners.create('.googleDocsParserLoadingElement', {
-	  radius: 11,
-	  height: 7,
-	  width: 1.9,
-	  dashes: 22,
-	  opacity: 0.3,
-	  rotation: 950,
-	  color: '#000000'
-	}).play();
+	if(!alreadyHasLoading){
+		$loading_container = $("<div style='width:40px; height:40px; margin:30px auto' class='googleDocsParserLoadingElement'></div>");
+		$(opts.loadingTarget).html($loading_container);
+		
+		loading = Spinners.create('.googleDocsParserLoadingElement', {
+		  radius: 11,
+		  height: 7,
+		  width: 1.9,
+		  dashes: 22,
+		  opacity: 0.3,
+		  rotation: 950,
+		  color: '#000000'
+		}).play();
+	}
+	
+	
+	
 
 		
 	localStorage.clear();
@@ -22,11 +29,13 @@ function hicGoogleDocsParser(opts){
 	var googleSpreadsheet = new GoogleSpreadsheet();
 	googleSpreadsheet.url(url);
 	googleSpreadsheet.load(function(result){
-		if(result == null)
+		if(result == null){
 			hicGoogleDocsParser(opts);
+		}
 		else{
-			loading.remove();
-			$loading_container.remove();
+			if($(opts.target).find(".googleDocsParserLoadingElement").size() != 0){
+				$(opts.target).find(".googleDocsParserLoadingElement").remove()	
+			}
 			createJsonFromGoogleDoc(result,opts);
 		}
 	});
@@ -106,7 +115,7 @@ function createJsonFromGoogleDoc(result,opts){
 		});
 	}
 	else{
-		eval(opts.callback+"(result)");  
+		eval(opts.callback+"(result,opts)");  
 	}
 	
 	
